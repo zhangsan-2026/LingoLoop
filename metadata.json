@@ -1,0 +1,7 @@
+{
+  "name": "LingoLoop AI",
+  "description": "A Notion-style media player for language learners featuring A/B looping, text synchronization, and Gemini-powered transcription and analysis.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
