@@ -1,3 +1,5 @@
+import './index.css';
+// ... 其余的 React 代码
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
