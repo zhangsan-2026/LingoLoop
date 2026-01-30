@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
+      // 1. 添加这一行：配置 GitHub Pages 的子路径
+      base: '/LingoLoop/', 
+
       server: {
         port: 3000,
         host: '0.0.0.0',
