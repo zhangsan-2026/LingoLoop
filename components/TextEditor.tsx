@@ -247,7 +247,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
                             <div className="flex gap-1 items-center">
                                 <input 
                                     type="number" 
-                                    step="0.01"
+                                    step="0.2"
                                     className="w-16 px-1 border rounded text-[10px] bg-white" 
                                     value={s.startTime}
                                     onClick={(e) => e.stopPropagation()}
@@ -256,7 +256,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
                                 <span>-</span>
                                 <input 
                                     type="number" 
-                                    step="0.01"
+                                    step="0.2"
                                     className="w-16 px-1 border rounded text-[10px] bg-white" 
                                     value={s.endTime}
                                     onClick={(e) => e.stopPropagation()}

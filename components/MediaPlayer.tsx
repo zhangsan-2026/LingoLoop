@@ -49,6 +49,10 @@ const MediaPlayer = forwardRef<MediaPlayerHandle, MediaPlayerProps>(({
     getCurrentTime: () => mediaRef.current?.currentTime || 0,
   }));
 
+  // 只要设置改变，就自动存入硬盘
+  useEffect(() => {
+    localStorage.setItem('lingoloop-settings', JSON.stringify(settings));
+  }, [settings]);
   // Handle Playback Rate
   useEffect(() => {
     if (mediaRef.current) {

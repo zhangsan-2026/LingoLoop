@@ -25,7 +25,26 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ project, onBack, onUpdateProjec
       : null
   );
   
-  const [settings, setSettings] = useState<PlaybackSettings>(DEFAULT_PLAYBACK_SETTINGS);
+  //原const [settings, setSettings] = useState<PlaybackSettings>(DEFAULT_PLAYBACK_SETTINGS);
+  const [settings, setSettings] = useState<PlaybackSettings>(() => {
+  // 1. 尝试从本地存储读取
+  const savedSettings = localStorage.getItem('lingoloop_playback_settings');
+    if (savedSettings) {
+        try {
+      // 2. 如果有旧数据，解析并使用
+            return JSON.parse(savedSettings);
+        } catch (e) {
+      console.error("读取设置失败", e);
+        }
+    }
+  // 3. 没找到则使用默认值
+            return DEFAULT_PLAYBACK_SETTINGS;
+  });
+  // 只要设置改变，就自动保存到本地存储
+  useEffect(() => {
+        localStorage.setItem('lingoloop_playback_settings', JSON.stringify(settings));
+  }, [settings]);
+  
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(project.currentTime || 0);
   const [mediaSrc, setMediaSrc] = useState<string | null>(null);
