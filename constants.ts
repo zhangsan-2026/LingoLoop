@@ -7,7 +7,7 @@ export const DEFAULT_PLAYBACK_SETTINGS: PlaybackSettings = {
   autoPlayNext: true,
 };
 
-export const LOOP_OPTIONS = [1, 3, 5, 10, 30]; // -1 represents Infinity
+export const LOOP_OPTIONS = [1, 2, 3, 6, 10, 20, 30]; // -1 represents Infinity
 
 export const DEFAULT_SPLIT_RATIO = 70; // 70% width for player
 
