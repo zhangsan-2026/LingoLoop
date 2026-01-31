@@ -83,6 +83,12 @@ const MediaPlayer = forwardRef<MediaPlayerHandle, MediaPlayerProps>(({
 
     const handleTimeUpdate = () => {
       const currentTime = media.currentTime;
+      // 如果当前时间已经超过了所有句子的范围，或者没有匹配的句子
+      if (!currentSentence) {
+      // 如果你希望文本结束后视频立即停止：
+        media.pause(); 
+      return;
+  }
       setInternalTime(currentTime);
       onTimeUpdate(currentTime);
 
@@ -104,13 +110,19 @@ const MediaPlayer = forwardRef<MediaPlayerHandle, MediaPlayerProps>(({
             }, settings.loopDelay * 1000);
             
           } else {
-            if (settings.autoPlayNext) {
+            // 核心改进：判断是否能跳到下一句
+            // 如果你的组件里能获取到句子列表，可以用 index < length - 1 来判断
+            const hasNextSentence = typeof hasNext !== 'undefined' ? hasNext : true;
+            if (settings.autoPlayNext && hasNextSentence) {
                onAutoPlayNext();
                setCurrentLoop(0); 
             } else {
+              // 如果没有下一句了，或者没勾选自动播放：强制停止并归位
               media.pause();
               media.currentTime = currentSentence.startTime;
               setCurrentLoop(0);
+              // 可选：显式设置播放状态为 false
+              setIsPlaying(false);
             }
           }
         }
