@@ -11,7 +11,7 @@
     ],
     "skipLibCheck": true,
     "types": [
-      "node"
+      //"node"暂时删除此处，报错
     ],
     "moduleResolution": "bundler",
     "isolatedModules": true,

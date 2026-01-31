@@ -360,6 +360,7 @@ const PlayerPage: React.FC<PlayerPageProps> = ({ project, onBack, onUpdateProjec
                 mediaType={project.mediaType as 'video' | 'audio'}
                 currentSentence={activeSentence}
                 settings={settings}
+                sentences={sentences}//添加输出数据到mediaplayer.tsx
                 onTimeUpdate={setCurrentTime}
                 onEnded={() => setIsPlaying(false)}
                 onAutoPlayNext={handleNext}

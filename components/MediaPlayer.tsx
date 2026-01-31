@@ -26,6 +26,7 @@ const MediaPlayer = forwardRef<MediaPlayerHandle, MediaPlayerProps>(({
   mediaType, 
   currentSentence, 
   settings, 
+  sentences, //在这里接收来自playerpage的数据
   onTimeUpdate, 
   onEnded,
   onAutoPlayNext,
@@ -81,47 +82,52 @@ const MediaPlayer = forwardRef<MediaPlayerHandle, MediaPlayerProps>(({
         }
     };
 
-    const handleTimeUpdate = () => {
+const handleTimeUpdate = () => {
+      const media = mediaRef.current;
+      if (!media) return;
+
       const currentTime = media.currentTime;
-      // 如果当前时间已经超过了所有句子的范围，或者没有匹配的句子
-      if (!currentSentence) {
-      // 如果你希望文本结束后视频立即停止：
-        media.pause(); 
-      return;
-  }
+      
+      // 1. 始终同步进度条和内部时间状态
       setInternalTime(currentTime);
       onTimeUpdate(currentTime);
 
-      // Looping Logic
+      // 2. 核心逻辑：只有在有当前句子且未在延迟等待时才处理循环/跳转
       if (currentSentence && !isDelaying) {
         if (currentTime >= currentSentence.endTime) {
-            
+          
           const maxLoops = settings.loopCountOption === -1 ? Infinity : settings.loopCountOption;
           
           if (currentLoop < maxLoops - 1) {
+            // 情况 A：继续在当前句子内循环
             media.pause();
             setIsDelaying(true);
             
             setTimeout(() => {
-              media.currentTime = currentSentence.startTime;
-              media.play().catch(e => console.log("Play interrupted", e));
-              setCurrentLoop(prev => prev + 1);
-              setIsDelaying(false);
+              if (mediaRef.current) {
+                mediaRef.current.currentTime = currentSentence.startTime;
+                mediaRef.current.play().catch(e => console.log("Play interrupted", e));
+                setCurrentLoop(prev => prev + 1);
+                setIsDelaying(false);
+              }
             }, settings.loopDelay * 1000);
             
           } else {
-            // 核心改进：判断是否能跳到下一句
-            // 如果你的组件里能获取到句子列表，可以用 index < length - 1 来判断
-            const hasNextSentence = typeof hasNext !== 'undefined' ? hasNext : true;
-            if (settings.autoPlayNext && hasNextSentence) {
+            // 情况 B：达到循环上限，判断是否跳转下一句
+            
+            // 找到当前句子在数组中的位置，判断是否为最后一句
+            const currentIndex = sentences.findIndex(s => s.id === currentSentence.id);
+            const isLastSentence = currentIndex === sentences.length - 1;
+
+            if (settings.autoPlayNext && !isLastSentence) {
+               // 还有下一句且开启了自动播放：跳转
                onAutoPlayNext();
                setCurrentLoop(0); 
             } else {
-              // 如果没有下一句了，或者没勾选自动播放：强制停止并归位
+              // 没有下一句了，或者是最后一句：彻底停止并回到该句开头
               media.pause();
               media.currentTime = currentSentence.startTime;
               setCurrentLoop(0);
-              // 可选：显式设置播放状态为 false
               setIsPlaying(false);
             }
           }
